@@ -10,5 +10,6 @@
 
 2) Run: set parameters in python/Evaluate_WWggDNN.py
 
+    * cd DNN_Evaluation/Evaluation
     * Evaluate_WWggDNN python/Evaluate_WWggDNN.py
    
