@@ -1,0 +1,25 @@
+<use   name="FWCore/FWLite"/>
+<use   name="PhysicsTools/UtilAlgos"/>
+<use   name="PhysicsTools/FWLite"/>
+<use   name="PhysicsTools/Utilities"/>
+<use   name="PhysicsTools/SelectorUtils"/>
+<use   name="flashgg/Taggers"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="FWCore/ParameterSetReader"/>
+<use   name="FWCore/ServiceRegistry"/>
+<use   name="CommonTools/UtilAlgos"/>
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/Utilities"/>
+<use   name="PhysicsTools/TensorFlow"/>
+<use   name="rootcore"/>
+<use   name="rootrflx"/>
+<use   name="roofit"/>
+<use   name="roofitcore"/>
+<use   name="boost_python"/>
+<!-- Flags CXXFLAGS="-ggdb"/ -->
+<environment>
+  <bin
+      name="Evaluate_WWggDNN"
+      file="Evaluate_WWggDNN.cpp">
+  </bin>
+</environment>
