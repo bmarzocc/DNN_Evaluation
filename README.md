@@ -11,5 +11,6 @@
 2) Run: set parameters in python/Evaluate_WWggDNN.py
 
     * cd DNN_Evaluation/Evaluation
+    * cmsenv
     * Evaluate_WWggDNN python/Evaluate_WWggDNN.py
    
