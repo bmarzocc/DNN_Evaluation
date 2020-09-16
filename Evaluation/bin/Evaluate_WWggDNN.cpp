@@ -29,6 +29,26 @@
 
 using namespace std;
 
+void SplitString(const std::string& str, vector<string>& cont, char delim = ' ')
+{
+    std::stringstream ss(str);
+    std::string token;
+    while (std::getline(ss, token, delim)) {
+        cont.push_back(token);
+    }
+}
+
+vector<string> ListTrees(TDirectory* dir)
+{
+    vector<string> names;
+    TIter next(dir->GetListOfKeys());
+    TObject* object = 0;
+    while ((object = next())){
+           names.push_back(string(object->GetName()));
+    }
+    return names;
+}
+
 void SetTree(TTree* tree, vector<float>* branchVals, vector<TBranch*>* branchRefs, vector<string>* inputVars)
 {
 
@@ -53,10 +73,9 @@ int main(int argc, char** argv)
    const edm::ParameterSet &filesOpt        = process.getParameter<edm::ParameterSet>( "ioFilesOpt" );
     
    // config inputs
-   string inputFile_           = filesOpt.getParameter<string>( "inputFile" );
-   string outputFile_          = filesOpt.getParameter<string>( "outputFile" );
-   string inputTree_           = filesOpt.getParameter<string>( "inputTree" );
-   vector<string> categories_  = filesOpt.getParameter<vector<string>>( "categories" );
+   vector<string> inputFiles_ = filesOpt.getParameter<vector<string>>( "inputFiles" );
+   string inputDir_           = filesOpt.getParameter<string>( "inputDir" );
+   string outputDir_          = filesOpt.getParameter<string>( "outputDir" );
 
    string inputModel_          = filesOpt.getParameter<string>( "inputModel" );
    vector<string> inputParams_ = filesOpt.getParameter<vector<string>>( "inputParams" );
@@ -65,50 +84,63 @@ int main(int argc, char** argv)
    // create a DNN session
    tensorflow::Session* session = tensorflow::createSession(tensorflow::loadGraphDef(inputModel_.c_str()));
 
-   TFile* inFile = TFile::Open(inputFile_.c_str());
-   TFile* outFile = TFile::Open(outputFile_.c_str(),"recreate");
-
    float evalDNN = -999.;
-   
-   for(unsigned int iCat=0; iCat<categories_.size(); iCat++)
+   for(unsigned int iFile=0; iFile<inputFiles_.size(); iFile++)
    {
-       TTree* inTree = (TTree*)inFile->Get((inputTree_+"_"+categories_.at(iCat)).c_str());
-       TTree* copyTree = (TTree*)inTree->CopyTree("");
-       copyTree->SetName(("13TeV_HHWWggTag_"+categories_.at(iCat)).c_str());
-       copyTree->SetTitle(("13TeV_HHWWggTag_"+categories_.at(iCat)).c_str());
+       TFile* inFile = TFile::Open(inputFiles_.at(iFile).c_str());
+       TDirectory* dir =(TDirectory*)inFile->Get(inputDir_.c_str());
+       vector<string> categories_ = ListTrees(dir);
+      	
+       vector<string> split_str;
+       SplitString(inputFiles_.at(iFile), split_str, '/');
+       
+       TFile* outFile = new TFile((outputDir_+split_str.at(split_str.size()-1)).c_str(),"recreate");
+       outFile->cd();
 
-       vector<float> branchVals; 
-       vector<TBranch*> branchRefs;
-       SetTree(inTree, &branchVals, &branchRefs, &inputVars_);
-       TBranch* evalDNNBranch = copyTree->Branch("evalDNN",&evalDNN,"evalDNN/F");
+       for(unsigned int iCat=0; iCat<categories_.size(); iCat++)
+       { 
+           if(!inFile->Get((inputDir_+"/"+categories_.at(iCat)).c_str())){
+              std::cout << "WARNING ----> NOT FOUND: " << (inputDir_+"/"+categories_.at(iCat)).c_str() << std::endl;         
+              continue;
+           }
+
+           TTree* inTree = (TTree*)inFile->Get((inputDir_+"/"+categories_.at(iCat)).c_str());
+           TTree* copyTree = (TTree*)inTree->CopyTree("");
+           copyTree->SetName(categories_.at(iCat).c_str());
+           copyTree->SetTitle(categories_.at(iCat).c_str());
+
+           vector<float> branchVals; 
+           vector<TBranch*> branchRefs;
+           SetTree(copyTree, &branchVals, &branchRefs, &inputVars_);
+           TBranch* evalDNNBranch = copyTree->Branch("evalDNN",&evalDNN,"evalDNN/F");
    
-       // Loop over all entries of the Tree
-       for(int entry = 0; entry < copyTree->GetEntries(); entry++)
-       {  
-           //if(entry>0) continue;
-           if(entry%1000==0) std::cout << "--- Reading " << (inputTree_+"_"+categories_.at(iCat)).c_str() << " = " << entry << std::endl;
-           inTree->GetEntry(entry);
+           // Loop over all entries of the Tree
+           for(int entry = 0; entry < copyTree->GetEntries(); entry++)
+           {  
+               //if(entry>0) continue;
+               if(entry%1000==0) std::cout << "--- Reading " << categories_.at(iCat).c_str() << " = " << entry << std::endl;
+               copyTree->GetEntry(entry);
 
-           // fill input variables
-           unsigned int shape = branchVals.size();
-           tensorflow::Tensor inputVals(tensorflow::DT_FLOAT, {1,shape});
-           for(unsigned int i = 0; i < shape; i++){
-               if(branchVals[i] == -999) inputVals.matrix<float>()(0,i) =  -9.;
-               else inputVals.matrix<float>()(0,i) =  float(branchVals[i]);
-           } 
+               // fill input variables
+               unsigned int shape = branchVals.size();
+               tensorflow::Tensor inputVals(tensorflow::DT_FLOAT, {1,shape});
+               for(unsigned int i = 0; i < shape; i++){
+                   if(branchVals[i] == -999) inputVals.matrix<float>()(0,i) =  -9.;
+                   else inputVals.matrix<float>()(0,i) =  float(branchVals[i]);
+               } 
         
-           // evaluate DNN
-           std::vector<tensorflow::Tensor> outputs;
-           tensorflow::run(session, { {inputParams_[0].c_str(), inputVals} } , { inputParams_[1].c_str() }, &outputs);
+               // evaluate DNN
+               std::vector<tensorflow::Tensor> outputs;
+               tensorflow::run(session, { {inputParams_[0].c_str(), inputVals} } , { inputParams_[1].c_str() }, &outputs);
 
-           evalDNN = outputs[0].matrix<float>()(0, 0);
-           evalDNNBranch->Fill(); 
+               evalDNN = outputs[0].matrix<float>()(0, 0);
+               evalDNNBranch->Fill(); 
 
+           }
        }
-       outFile->Write(); 
+       outFile->Write();
+       outFile->Close(); 
    }
-   outFile->Close();
-
    // cleanup
    tensorflow::closeSession(session);
 
