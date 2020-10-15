@@ -45,6 +45,19 @@ vector<string> ListTrees(TDirectory* dir)
     TObject* object = 0;
     while ((object = next())){
            names.push_back(string(object->GetName()));
+           //std::cout << "ListTrees: " << dir->GetName() << " - " << object->GetName() << std::endl; 
+    }
+    return names;
+}
+
+vector<string> ListTrees(TFile* file)
+{
+    vector<string> names;
+    TIter next(file->GetListOfKeys());
+    TObject* object = 0;
+    while ((object = next())){
+           names.push_back(string(object->GetName()));
+           //std::cout << "ListTrees: " << object->GetName() << std::endl; 
     }
     return names;
 }
@@ -82,29 +95,38 @@ int main(int argc, char** argv)
    vector<string> inputVars_   = filesOpt.getParameter<vector<string>>( "inputVars" );
 
    // create a DNN session
+   std::cout << "inputModel: " << inputModel_.c_str() << std::endl;
    tensorflow::Session* session = tensorflow::createSession(tensorflow::loadGraphDef(inputModel_.c_str()));
 
    float evalDNN = -999.;
    for(unsigned int iFile=0; iFile<inputFiles_.size(); iFile++)
    {
        TFile* inFile = TFile::Open(inputFiles_.at(iFile).c_str());
-       TDirectory* dir =(TDirectory*)inFile->Get(inputDir_.c_str());
-       vector<string> categories_ = ListTrees(dir);
-      	
+       vector<string> categories_;
+       
+       if(inputDir_!=""){
+          TDirectory* dir =(TDirectory*)inFile->Get(inputDir_.c_str());
+          categories_ = ListTrees(dir);
+       }else{
+          categories_ = ListTrees(inFile);  
+       }
+	
        vector<string> split_str;
        SplitString(inputFiles_.at(iFile), split_str, '/');
        
        TFile* outFile = new TFile((outputDir_+split_str.at(split_str.size()-1)).c_str(),"recreate");
        outFile->cd();
 
+       if(inputDir_!="") inputDir_ = inputDir_ + '/';
        for(unsigned int iCat=0; iCat<categories_.size(); iCat++)
        { 
-           if(!inFile->Get((inputDir_+"/"+categories_.at(iCat)).c_str())){
-              std::cout << "WARNING ----> NOT FOUND: " << (inputDir_+"/"+categories_.at(iCat)).c_str() << std::endl;         
+           if(!inFile->Get((inputDir_+categories_.at(iCat)).c_str())){
+              std::cout << "WARNING ----> NOT FOUND: " << (inputDir_+categories_.at(iCat)).c_str() << std::endl;         
               continue;
            }
 
-           TTree* inTree = (TTree*)inFile->Get((inputDir_+"/"+categories_.at(iCat)).c_str());
+           TTree* inTree = (TTree*)inFile->Get((inputDir_+categories_.at(iCat)).c_str());
+           inTree->SetBranchStatus("evalDNN",0);
            TTree* copyTree = (TTree*)inTree->CopyTree("");
            copyTree->SetName(categories_.at(iCat).c_str());
            copyTree->SetTitle(categories_.at(iCat).c_str());
