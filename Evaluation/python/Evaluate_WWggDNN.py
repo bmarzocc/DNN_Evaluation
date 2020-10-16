@@ -50,10 +50,10 @@ process.ioFilesOpt = cms.PSet(
     ),
     #inputDir = cms.string('tagsDumper/trees'), 
     inputDir = cms.string(''),  
-    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/'),
+    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/'),
     
     ##input DNN
-    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/HHWWyyDNN_binary_testnewfiles.pb'),
+    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/HHWWyyDNN_binary_weights_exp.pb'),
     inputParams = cms.vstring('dense_1_input:0','dense_6/Sigmoid:0'),   
     inputVars = cms.vstring(
        'goodJets_1_pt',
