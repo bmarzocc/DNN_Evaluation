@@ -1,3 +1,4 @@
+weight 100 -0.01 0.01 Weight
 goodJets_1_pt 100 0. 500. Pt(GeV)
 Leading_Photon_MVA 100 -1. 1. MVA
 goodMuons_0_E 100 0. 600. E(GeV)
