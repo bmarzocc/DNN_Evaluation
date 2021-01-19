@@ -120,6 +120,7 @@ int main(int argc, char** argv)
        if(inputDir_!="") inputDir_ = inputDir_ + '/';
        for(unsigned int iCat=0; iCat<categories_.size(); iCat++)
        { 
+  
            if(!inFile->Get((inputDir_+categories_.at(iCat)).c_str())){
               std::cout << "WARNING ----> NOT FOUND: " << (inputDir_+categories_.at(iCat)).c_str() << std::endl;         
               continue;
@@ -147,7 +148,7 @@ int main(int argc, char** argv)
                unsigned int shape = branchVals.size();
                tensorflow::Tensor inputVals(tensorflow::DT_FLOAT, {1,shape});
                for(unsigned int i = 0; i < shape; i++){
-                   if(branchVals[i] == -999) inputVals.matrix<float>()(0,i) =  -9.;
+                   if(branchVals[i]<-25.) inputVals.matrix<float>()(0,i) =  -9.;
                    else inputVals.matrix<float>()(0,i) =  float(branchVals[i]);
                } 
         
