@@ -209,11 +209,12 @@ if __name__ == '__main__':
  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal/'
 
  nBins = 100
+ #print args.nBins,args.min,args.max
  if args.nBins: nBins = args.nBins
  min = 0.1
- if args.min: min = args.min
+ if args.min!=0.1: min = args.min
  max = 1.
- if args.max: max = args.max
+ if args.max!=1.: max = args.max
  
  print "inDir:",inDir
  print "nBins:",nBins
@@ -244,10 +245,10 @@ if __name__ == '__main__':
  histo_scale.Reset() 
  sig_tree_2017 = ROOT.TChain()
  sig_tree_2017.AddFile(inDir+'/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars.root/GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_v1')
- sig_tree_2017.Draw("Leading_Photon_MVA<-1.?-1.1:Leading_Photon_MVA>>histo_scale","weight*"+Cut_SR)
+ sig_tree_2017.Draw("Leading_Photon_MVA<-1.?-1.1:Leading_Photon_MVA>>histo_scale","weight*2*0.441*0.00097*31.049*"+Cut_SR)
  sig_scale_2017 = float(histo_scale.Integral())
- sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SB_2017",str(lumi_2017)+"*weight*"+Cut_SB)  
- sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR) 
+ sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SB_2017",str(lumi_2017)+"*weight*2*0.441*0.00097*31.049*"+Cut_SB)  
+ sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SR_2017",str(lumi_2017)+"*weight*2*0.441*0.00097*31.049*"+Cut_SR) 
 
  ### HtoGG Bkgs ###
  ggHtoGG_tree_2017 = ROOT.TChain()

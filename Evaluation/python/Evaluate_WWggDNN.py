@@ -54,10 +54,10 @@ process.ioFilesOpt = cms.PSet(
     ),
     #inputDir = cms.string('tagsDumper/trees'), 
     inputDir = cms.string(''),  
-    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_oddSignal/'),
+    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/'),
     
     ##input DNN
-    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_oddSignal/model.pb'),
+    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/model.pb'),
     inputParams = cms.vstring('dense_1_input:0','dense_4/Sigmoid:0'),   
     inputVars = cms.vstring(
         'goodJets_0_E',
