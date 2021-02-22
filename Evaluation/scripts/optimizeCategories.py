@@ -32,11 +32,10 @@ def reduceTree(inTree, cut):
   return small
 
 def computeSignificance(s,b,m,d,d_noSmooth):
-  #print "computeSignificance:",s,b,m,d,d_noSmooth 
-  significance=-999.
-  if b!=0 and 1+(s/b)>0.: significance = ((2*(s+b)*math.log(1+(s/b))) - 2*s) 
+  significance = ((2*(s+b)*math.log(1+(s/b))) - 2*s) 
   if significance>0. and d_noSmooth>=8. and b>0.: return math.sqrt(significance)
-#  if significance>0. and b>0. and d_noSmooth>0.: return math.sqrt(significance)
+  #significance = s/math.sqrt(b)
+  #if b>0: return significance
   else: return -999. 
 
 #def computeSignificance(s,b,m,d,d_noSmooth):

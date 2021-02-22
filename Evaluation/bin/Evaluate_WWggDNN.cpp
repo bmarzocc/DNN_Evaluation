@@ -62,22 +62,63 @@ vector<string> ListTrees(TFile* file)
     return names;
 }
 
-void SetTree(TTree* tree, vector<float>* branchVals, vector<TBranch*>* branchRefs, vector<string>* inputVars)
+void SetTree(TTree* tree, vector<float>* branchVals, vector<TBranch*>* branchRefs, vector<string>* inputBranches)
 {
 
    size_t nBranches = tree->GetListOfBranches()->GetEntries();
-   branchVals->resize(inputVars->size());
-   branchRefs->resize(inputVars->size()); 
+   branchVals->resize(inputBranches->size());
+   branchRefs->resize(inputBranches->size()); 
 
-   for(unsigned int iVar = 0; iVar < inputVars->size(); ++iVar)
+   for(unsigned int iVar = 0; iVar < inputBranches->size(); ++iVar)
    {
        for(size_t i = 0; i < nBranches; ++i)
        {
            TBranch *br =dynamic_cast<TBranch*>(tree->GetListOfBranches()->At(i));
-           if(string(br->GetName()) == inputVars->at(iVar)) tree->SetBranchAddress(br->GetName(), &branchVals->at(iVar), &branchRefs->at(iVar)); 
+           if(string(br->GetName()) == inputBranches->at(iVar)){ 
+              if(i==5) continue;
+              //std::cout << "Branch: " << i << " - " << br->GetName() << std::endl;  
+              tree->SetBranchAddress(br->GetName(), &branchVals->at(iVar), &branchRefs->at(iVar)); 
+           }
        }
    }
 
+}
+
+void SetValues(vector<float>* inputVals, vector<float>* branchVals)
+{
+   for(unsigned int iBranch =0; iBranch<branchVals->size(); iBranch++){
+       if(isnan(branchVals->at(iBranch))) std::cout << "Bad iBranch NAN: " << iBranch << std::endl; 
+       if(isinf(branchVals->at(iBranch))) std::cout << "Bad iBranch INF: " << iBranch << std::endl;  
+   }  
+
+   inputVals->push_back(branchVals->at(0));
+   inputVals->push_back(branchVals->at(1));
+   inputVals->push_back(branchVals->at(2)/branchVals->at(32));
+   inputVals->push_back(branchVals->at(3)/branchVals->at(32));
+   inputVals->push_back(branchVals->at(4));
+   inputVals->push_back(branchVals->at(5));
+   inputVals->push_back(branchVals->at(6));
+   inputVals->push_back(branchVals->at(7));
+   inputVals->push_back(branchVals->at(8));
+   inputVals->push_back(branchVals->at(9));
+   inputVals->push_back(branchVals->at(10));
+   inputVals->push_back(branchVals->at(11));
+   inputVals->push_back(branchVals->at(12)+branchVals->at(13)+branchVals->at(14));
+   inputVals->push_back(branchVals->at(15));
+   inputVals->push_back(branchVals->at(16));
+   inputVals->push_back(branchVals->at(17)/branchVals->at(32));
+   inputVals->push_back(branchVals->at(18));
+   inputVals->push_back(branchVals->at(19));
+   inputVals->push_back(branchVals->at(20));
+   inputVals->push_back(branchVals->at(21));
+   inputVals->push_back(branchVals->at(22));
+   inputVals->push_back(branchVals->at(23)/branchVals->at(32));
+   inputVals->push_back(branchVals->at(24));
+   inputVals->push_back(branchVals->at(25));
+   inputVals->push_back(branchVals->at(26));
+   inputVals->push_back(branchVals->at(27));
+   inputVals->push_back(branchVals->at(28));
+   inputVals->push_back(branchVals->at(29)+branchVals->at(30)+branchVals->at(31)); 
 }
 
 int main(int argc, char** argv)
@@ -86,13 +127,14 @@ int main(int argc, char** argv)
    const edm::ParameterSet &filesOpt        = process.getParameter<edm::ParameterSet>( "ioFilesOpt" );
     
    // config inputs
-   vector<string> inputFiles_ = filesOpt.getParameter<vector<string>>( "inputFiles" );
-   string inputDir_           = filesOpt.getParameter<string>( "inputDir" );
-   string outputDir_          = filesOpt.getParameter<string>( "outputDir" );
+   vector<string> inputFiles_    = filesOpt.getParameter<vector<string>>( "inputFiles" );
+   string inputDir_              = filesOpt.getParameter<string>( "inputDir" );
+   string outputDir_             = filesOpt.getParameter<string>( "outputDir" );
 
-   string inputModel_          = filesOpt.getParameter<string>( "inputModel" );
-   vector<string> inputParams_ = filesOpt.getParameter<vector<string>>( "inputParams" );
-   vector<string> inputVars_   = filesOpt.getParameter<vector<string>>( "inputVars" );
+   string inputModel_            = filesOpt.getParameter<string>( "inputModel" );
+   vector<string> inputParams_   = filesOpt.getParameter<vector<string>>( "inputParams" );
+   vector<string> inputBranches_ = filesOpt.getParameter<vector<string>>( "inputBranches" );
+   vector<string> inputVars_     = filesOpt.getParameter<vector<string>>( "inputVars" );
 
    // create a DNN session
    std::cout << "inputModel: " << inputModel_.c_str() << std::endl;
@@ -132,9 +174,10 @@ int main(int argc, char** argv)
            copyTree->SetName(categories_.at(iCat).c_str());
            copyTree->SetTitle(categories_.at(iCat).c_str());
 
+           vector<float> inputValues; 
            vector<float> branchVals; 
            vector<TBranch*> branchRefs;
-           SetTree(copyTree, &branchVals, &branchRefs, &inputVars_);
+           SetTree(copyTree, &branchVals, &branchRefs, &inputBranches_);
            TBranch* evalDNNBranch = copyTree->Branch("evalDNN",&evalDNN,"evalDNN/F");
    
            // Loop over all entries of the Tree
@@ -144,19 +187,23 @@ int main(int argc, char** argv)
                if(entry%1000==0) std::cout << "--- Reading " << categories_.at(iCat).c_str() << " = " << entry << std::endl;
                copyTree->GetEntry(entry);
 
+               //if( entry < 10000 ) continue;
+               inputValues.clear();
+               SetValues(&inputValues, &branchVals);
+ 
                // fill input variables
-               unsigned int shape = branchVals.size();
+               unsigned int shape = inputValues.size();
                tensorflow::Tensor inputVals(tensorflow::DT_FLOAT, {1,shape});
                for(unsigned int i = 0; i < shape; i++){
-                   if(branchVals[i]<-25.) inputVals.matrix<float>()(0,i) =  -9.;
-                   else inputVals.matrix<float>()(0,i) =  float(branchVals[i]);
+                   //if(std::isinf(inputValues[i])) std::cout << "inf: " << i << std::endl; 
+                   if(inputValues[i]<-25. || std::isinf(inputValues[i]) || std::isnan(inputValues[i])) inputVals.matrix<float>()(0,i) =  -9.;
+                   else inputVals.matrix<float>()(0,i) =  float(inputValues.at(i));
                } 
-        
+               
                // evaluate DNN
                std::vector<tensorflow::Tensor> outputs;
-               tensorflow::run(session, { {inputParams_[0].c_str(), inputVals} } , { inputParams_[1].c_str() }, &outputs);
-
-               evalDNN = outputs[0].matrix<float>()(0, 0);
+               tensorflow::run(session, { {inputParams_[0].c_str(), inputVals} } , { inputParams_[1].c_str() }, &outputs); 
+               evalDNN = outputs[0].matrix<float>()(0, 0);   
                evalDNNBranch->Fill(); 
 
            }
