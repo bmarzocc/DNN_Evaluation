@@ -202,34 +202,43 @@ if __name__ == '__main__':
  parser.add_argument('-n', '--nBins', dest='nBins', required=False, type=int)
  parser.add_argument('-m', '--min', dest='min', required=False, type=float)
  parser.add_argument('-M', '--max', dest='max', required=False, type=float)
+ parser.add_argument('-r', '--massMin', dest='massMin', required=False, type=float)
+ parser.add_argument('-R', '--massMax', dest='massMax', required=False, type=float)
  
  args = parser.parse_args()
  inDir = args.inDir
- #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs/'
+ #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
 
  nBins = 100
  #print args.nBins,args.min,args.max
  if args.nBins: nBins = args.nBins
  min = 0.1
- if args.min!=0.1: min = args.min
+ if args.min: min = args.min
  max = 1.
- if args.max!=1.: max = args.max
- 
+ if args.max: max = args.max
+ massMin = 115.
+ if args.massMin: massMin = args.massMin
+ massMax = 135.
+ if args.massMax: massMax = args.massMax
+
  print "inDir:",inDir
  print "nBins:",nBins
  print "Min:",min
  print "Max:",max
+ print "massMin:",massMin
+ print "massMax:",massMax
  
  histo_scale = ROOT.TH1F("histo_scale","",100000,-1.1,1.)
  Cut_noMass = '( evalDNN>'+str(min)+' )'
- Cut_SR = '( CMS_hgg_mass>100. && CMS_hgg_mass<180. && (CMS_hgg_mass > 115 && CMS_hgg_mass < 135) && evalDNN>'+str(min)+' )'
+ Cut_SR = '( CMS_hgg_mass>100. && CMS_hgg_mass<180. && (CMS_hgg_mass > '+str(massMin)+' && CMS_hgg_mass < '+str(massMax)+') && evalDNN>'+str(min)+' )'
  Cut_SB = '( CMS_hgg_mass>100. && CMS_hgg_mass<180. && !(CMS_hgg_mass > 115 && CMS_hgg_mass < 135) && evalDNN>'+str(min)+' )'
 
  h_DNN_signal_SB_2017 = ROOT.TH1F("h_DNN_signal_SB_2017","h_DNN_signal_SB_2017",int(nBins),float(min),float(max))
  h_DNN_signal_SR_2017 = ROOT.TH1F("h_DNN_signal_SR_2017","h_DNN_signal_SR_2017",int(nBins),float(min),float(max)) 
  h_DNN_data_SB_2017 = ROOT.TH1F("h_DNN_data_SB_2017","h_DNN_data_SB_2017",int(nBins),float(min),float(max))  
+ h_DNN_bkg_SR_2017 = ROOT.TH1F("h_DNN_bkg_SR_2017","h_DNN_bkg_SR_2017",int(nBins),float(min),float(max)) 
  
- diffBins = nBins
+ diffBins = 30
  h_DNN_data_SB_2017_diffBins = ROOT.TH1F("h_DNN_data_SB_2017_diffBins","h_DNN_data_SB_2017_diffBins",diffBins,float(min),float(max))  
  h_DNN_bkg_SB_2017_diffBins = ROOT.TH1F("h_DNN_bkg_SB_2017_diffBins","h_DNN_bkg_SB_2017_diffBins",diffBins,float(min),float(max)) 
 
@@ -321,6 +330,7 @@ if __name__ == '__main__':
  bkg_tree_2017 = reduceTree(bkg_tree_2017,Cut_noMass)
  bkg_tree_2017.Draw("Leading_Photon_MVA<-1.?-1.1:Leading_Photon_MVA>>histo_scale","weight*"+Cut_SB)
  bkg_scale_2017 = float(histo_scale.Integral())
+ bkg_tree_2017.Draw("evalDNN>>h_DNN_bkg_SR_2017",str(data_scale_2017/bkg_scale_2017)+"*weight*"+Cut_SR)
  bkg_tree_2017.Draw("evalDNN>>h_DNN_bkg_SB_2017_diffBins",str(data_scale_2017/bkg_scale_2017)+"*weight*"+Cut_SB)
 
  print "2017 Data/bkg SB scale:",data_scale_2017/bkg_scale_2017
@@ -332,6 +342,10 @@ if __name__ == '__main__':
  h_DNN_signal_SR = h_DNN_signal_SR_2017.Clone()
  h_DNN_signal_SR.SetName('h_DNN_signal_SR')
  h_DNN_signal_SR.SetTitle('h_DNN_signal_SR')
+ 
+ h_DNN_bkg_SR = h_DNN_bkg_SR_2017.Clone()
+ h_DNN_bkg_SR.SetName('h_DNN_bkg_SR')
+ h_DNN_bkg_SR.SetTitle('h_DNN_bkg_SR')
 
  h_DNN_data_SB = h_DNN_data_SB_2017.Clone()
  h_DNN_data_SB.SetName('h_DNN_data_SB')
@@ -358,13 +372,10 @@ if __name__ == '__main__':
  bkg_tree_2017_bdtWeight = ROOT.TChain()
  MakeTree(bkg_tree_2017, h_DNN_ratio_SB, data_scale_2017/bkg_scale_2017, 'file.root')
  bkg_tree_2017_bdtWeight.AddFile('file.root/'+str(treeNames[0].split('/')[1]))
- #bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017","bdt_weight*weight*"+Cut_SB)
- #bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017_diffBins","bdt_weight*weight*"+Cut_SB)
- #bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SR_weighted_2017","bdt_weight*weight*"+Cut_SR)
- bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017",str(data_scale_2017/bkg_scale_2017)+"*weight*"+Cut_SB)
- bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017_diffBins",str(data_scale_2017/bkg_scale_2017)+"*weight*"+Cut_SB)
- bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SR_weighted_2017",str(data_scale_2017/bkg_scale_2017)+"*weight*"+Cut_SR)
-
+ bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017","bdt_weight*weight*"+Cut_SB)
+ bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SB_weighted_2017_diffBins","bdt_weight*weight*"+Cut_SB)
+ bkg_tree_2017_bdtWeight.Draw("evalDNN>>h_DNN_bkg_SR_weighted_2017","bdt_weight*weight*"+Cut_SR)
+ 
  h_DNN_bkg_SB_weighted = h_DNN_bkg_SB_weighted_2017.Clone()
  h_DNN_bkg_SB_weighted.SetName('h_DNN_bkg_SB_weighted')
  h_DNN_bkg_SB_weighted.SetTitle('h_DNN_bkg_SB_weighted')
@@ -383,13 +394,21 @@ if __name__ == '__main__':
  algos = ['SmoothSuper']
 
  for algo in algos:
-   outFile = ROOT.TFile(inDir+'/DNN_Histos_smoothing_'+algo+'_bins'+str(nBins)+'.root',"RECREATE")
+   outFile = ROOT.TFile(inDir+'/DNN_Histos_smoothing_'+algo+'_bins'+str(nBins)+'_massMin'+str(massMin)+'_massMax'+str(massMax)+'.root',"RECREATE")
    outFile.cd()
    hist_smooth = smoothing(h_DNN_bkg_SR_weighted,algo)
    if hist_smooth!=-1: 
      drawHistos(h_DNN_bkg_SR_weighted,hist_smooth[0],hist_smooth[1],hist_smooth[2],h_DNN_bkg_SR_weighted.GetName()+"_smoothing_"+algo+"_nBins_"+str(nBins))
      drawHisto(hist_smooth[4],h_DNN_bkg_SR_weighted.GetName()+"_smoothing_"+algo+"_Diff_nBins_"+str(nBins)) 
      h_DNN_bkg_SR_weighted.Write()
+     hist_smooth[0].Write() 
+     hist_smooth[1].Write() 
+     hist_smooth[2].Write() 
+   hist_smooth = smoothing(h_DNN_bkg_SR,algo)
+   if hist_smooth!=-1: 
+     drawHistos(h_DNN_bkg_SR,hist_smooth[0],hist_smooth[1],hist_smooth[2],h_DNN_bkg_SR.GetName()+"_smoothing_"+algo+"_nBins_"+str(nBins))
+     drawHisto(hist_smooth[4],h_DNN_bkg_SR.GetName()+"_smoothing_"+algo+"_Diff_nBins_"+str(nBins)) 
+     h_DNN_bkg_SR.Write()
      hist_smooth[0].Write() 
      hist_smooth[1].Write() 
      hist_smooth[2].Write() 

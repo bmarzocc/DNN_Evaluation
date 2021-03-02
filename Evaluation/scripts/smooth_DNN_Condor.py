@@ -4,7 +4,7 @@ from ROOT import *
 import sys, getopt
 from array import array
 import itertools
-from optparse import OptionParser
+import argparse
 import operator
 import os
 
@@ -12,23 +12,34 @@ import os
 
 if __name__ == '__main__':
 
+  parser =  argparse.ArgumentParser(description='cat MVA')
+  parser.add_argument('-d', '--inDir', dest='inDir', required=True, type=str)
+  parser.add_argument('-m', '--min', dest='min', required=False, type=float)
+  parser.add_argument('-M', '--max', dest='max', required=False, type=float)
+  parser.add_argument('-r', '--massMin', dest='massMin', required=False, type=float)
+  parser.add_argument('-R', '--massMax', dest='massMax', required=False, type=float)
+  parser.add_argument('-n', '--nStep', dest='nStep', required=False, type=int)
+   
+  args = parser.parse_args()
+  inDir = args.inDir
+  #inDir='/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
 
-  parser = OptionParser()
-  parser.add_option( "-d", "--inDir",   dest="inDir",    default="",   type="string", help="inDir" )
-  parser.add_option( "-r", "--massMin", dest='massMin',  default=120., type="float",  help="massMin")
-  parser.add_option( "-R", "--massMax", dest='massMax',  default=130., type="float",  help="massMax")
-  parser.add_option( "-n", "--nStep",   dest='nStep',    default=1,    type="int",      help="nStep")
-  (options, args) = parser.parse_args()  
+  min = 0.1
+  if args.min: min = args.min
+  max = 1.
+  if args.max: max = args.max
+  massMin = 115.
+  if args.massMin: massMin = args.massMin
+  massMax = 135.
+  if args.massMax: massMax = args.massMax
+  nStep = 1 
+  if args.nStep: nStep = args.nStep
 
-  inDir = options.inDir
-  massMin = options.massMin
-  massMax = options.massMax
-  nStep = options.nStep
-  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
-
-  print "inDir:  ",inDir
+  print "inDir:",inDir
+  print "bdtMin:",min
+  print "bdtMax:",max
   print "massMin:",massMin
-  print "massMax:",massMax
+  print "massMin:",massMax
   print "nStep:",nStep
   
   local = os.getcwd()
@@ -61,30 +72,25 @@ JOBID=$1;
 LOCAL=$2; 
 INPUTDIR=$3;
 NBINS=$4;
-NCATS=$5;
-MASSMIN=$6
-MASSMAX=$7
-SMOOTH=$8
-WEIGHT=$9
+MIN=$5
+MAX=$6
+MASSMIN=$7
+MASSMAX=$8
 
 echo -e "evaluate"
 eval `scramv1 ru -sh`
 
-echo -e "Optimize significance";
-python ${LOCAL}/optimizeCategories.py -d ${INPUTDIR}/ -n ${NBINS} -c ${NCATS} --massMin ${MASSMIN} --massMax ${MASSMAX} -s ${SMOOTH} -w ${WEIGHT}
+echo -e "smoothing...";
+python ${LOCAL}/smooth_DNN.py -d ${INPUTDIR} -n ${NBINS} --min ${MIN} --max ${MAX} --massMin ${MASSMIN} --massMax ${MASSMAX}
 
 echo -e "DONE";
 '''
+
   arguments=[]
   nBins = [10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,160,170,180,190,380,760,1520]
-  for iBin in nBins: 
-     for nCat in range(1,6):
-        for i  in range(0,nStep):  
-           for j in range(0,2): 
-              for k in range(0,2): 
-                 if iBin == 380 and nCat == 5: continue
-                 if iBin > 380 and nCat > 3: continue
-                 arguments.append("{} {} {} {} {} {} {} {} {}".format(nCat,local,inDir+"/",iBin,nCat,massMin+i,massMax-i,j,k))     
+  for iBin in nBins:
+     for i  in range(0,nStep): 
+        arguments.append("{} {} {} {} {} {} {} {}".format(1,local,inDir+"/",iBin,min,max,massMin+i,massMax-i))     
   with open("arguments.txt", "w") as args:
      args.write("\n".join(arguments)) 
   with open("run_script.sh", "w") as rs:
