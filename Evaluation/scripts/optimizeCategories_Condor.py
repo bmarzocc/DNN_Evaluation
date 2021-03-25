@@ -24,7 +24,7 @@ if __name__ == '__main__':
   massMin = options.massMin
   massMax = options.massMax
   nStep = options.nStep
-  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
 
   print "inDir:  ",inDir
   print "massMin:",massMin

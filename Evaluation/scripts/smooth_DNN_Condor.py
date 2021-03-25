@@ -22,7 +22,7 @@ if __name__ == '__main__':
    
   args = parser.parse_args()
   inDir = args.inDir
-  #inDir='/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+  #inDir='/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
 
   min = 0.1
   if args.min: min = args.min
