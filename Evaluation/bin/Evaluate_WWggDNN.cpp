@@ -75,7 +75,7 @@ void SetTree(TTree* tree, vector<float>* branchVals, vector<TBranch*>* branchRef
        {
            TBranch *br =dynamic_cast<TBranch*>(tree->GetListOfBranches()->At(i));
            if(string(br->GetName()) == inputBranches->at(iVar)){ 
-              if(i==5) continue;
+              //if(i==5) continue;
               //std::cout << "Branch: " << i << " - " << br->GetName() << std::endl;  
               tree->SetBranchAddress(br->GetName(), &branchVals->at(iVar), &branchRefs->at(iVar)); 
            }
@@ -84,41 +84,45 @@ void SetTree(TTree* tree, vector<float>* branchVals, vector<TBranch*>* branchRef
 
 }
 
-void SetValues(vector<float>* inputVals, vector<float>* branchVals)
+void SetValues(vector<float>* inputVals, vector<float>* branchVals, bool isBkg_, float nodeNumber)
 {
    for(unsigned int iBranch =0; iBranch<branchVals->size(); iBranch++){
-       if(isnan(branchVals->at(iBranch))) std::cout << "Bad iBranch NAN: " << iBranch << std::endl; 
-       if(isinf(branchVals->at(iBranch))) std::cout << "Bad iBranch INF: " << iBranch << std::endl;  
+       if(isnan(branchVals->at(iBranch))) std::cout << "SetValues --> Bad iBranch NAN: " << iBranch << std::endl; 
+       if(isinf(branchVals->at(iBranch))) std::cout << "SetValues --> Bad iBranch INF: " << iBranch << std::endl;  
    }  
 
-   inputVals->push_back(branchVals->at(0));
-   inputVals->push_back(branchVals->at(1));
-   inputVals->push_back(branchVals->at(2)/branchVals->at(32));
-   inputVals->push_back(branchVals->at(3)/branchVals->at(32));
-   inputVals->push_back(branchVals->at(4));
-   inputVals->push_back(branchVals->at(5));
-   inputVals->push_back(branchVals->at(6));
-   inputVals->push_back(branchVals->at(7));
-   inputVals->push_back(branchVals->at(8));
-   inputVals->push_back(branchVals->at(9));
-   inputVals->push_back(branchVals->at(10));
-   inputVals->push_back(branchVals->at(11));
-   inputVals->push_back(branchVals->at(12)+branchVals->at(13)+branchVals->at(14));
-   inputVals->push_back(branchVals->at(15));
-   inputVals->push_back(branchVals->at(16));
-   inputVals->push_back(branchVals->at(17)/branchVals->at(32));
-   inputVals->push_back(branchVals->at(18));
-   inputVals->push_back(branchVals->at(19));
-   inputVals->push_back(branchVals->at(20));
-   inputVals->push_back(branchVals->at(21));
-   inputVals->push_back(branchVals->at(22));
-   inputVals->push_back(branchVals->at(23)/branchVals->at(32));
-   inputVals->push_back(branchVals->at(24));
-   inputVals->push_back(branchVals->at(25));
-   inputVals->push_back(branchVals->at(26));
-   inputVals->push_back(branchVals->at(27));
-   inputVals->push_back(branchVals->at(28));
-   inputVals->push_back(branchVals->at(29)+branchVals->at(30)+branchVals->at(31)); 
+   inputVals->push_back(branchVals->at(0)); //0: goodJets_0_E
+   inputVals->push_back(branchVals->at(1)); //1: goodLepton_phi
+   inputVals->push_back(branchVals->at(2)/branchVals->at(33)); //2: Subleading_Photon_E/CMS_hgg_mass
+   inputVals->push_back(branchVals->at(3)/branchVals->at(33)); //3: Leading_Photon_pt/CMS_hgg_mass
+   inputVals->push_back(branchVals->at(4)); //4: Leading_Photon_MVA
+   inputVals->push_back(branchVals->at(5)); //5: goodLepton_eta
+   inputVals->push_back(branchVals->at(6)); //6: goodJets_1_E
+   inputVals->push_back(branchVals->at(7)); //7: Wmass_goodJets12
+   inputVals->push_back(branchVals->at(8)); //8: goodLepton_E
+   inputVals->push_back(branchVals->at(9)); //9: goodJets_1_eta
+   inputVals->push_back(branchVals->at(10)); //10: goodJets_1_phi
+   inputVals->push_back(branchVals->at(11)); //11: Subleading_Photon_eta
+   inputVals->push_back(branchVals->at(12)+branchVals->at(13)+branchVals->at(14)); //12: goodJets_1_bTagging 
+   inputVals->push_back(branchVals->at(15)); //13: goodLepton_pt
+   inputVals->push_back(branchVals->at(16)); //14: goodJets_0_pt
+   if(isBkg_) inputVals->push_back(nodeNumber); //15: Node_Number 
+   else inputVals->push_back(branchVals->at(17)); //15: Node_Number
+   inputVals->push_back(branchVals->at(18)/branchVals->at(33)); //16: Subleading_Photon_pt/CMS_hgg_mass
+   inputVals->push_back(branchVals->at(19)); //17: Subleading_Photon_phi
+   inputVals->push_back(branchVals->at(20)); //18: goodJets_1_pt
+   inputVals->push_back(branchVals->at(21)); //19: N_goodJets
+   inputVals->push_back(branchVals->at(22)); //20: goodJets_0_phi
+   inputVals->push_back(branchVals->at(23)); //21: METCor_pt
+   inputVals->push_back(branchVals->at(24)/branchVals->at(33)); //22: Leading_Photon_E/CMS_hgg_mass
+   inputVals->push_back(branchVals->at(25)); //23: Leading_Photon_phi
+   inputVals->push_back(branchVals->at(26)); //24: Subleading_Photon_MVA
+   inputVals->push_back(branchVals->at(27)); //25: goodJets_0_eta
+   inputVals->push_back(branchVals->at(28)); //26: Leading_Photon_eta
+   inputVals->push_back(branchVals->at(29)); //27: Wmt_L
+   inputVals->push_back(branchVals->at(30)+branchVals->at(31)+branchVals->at(32)); //28: goodJets_0_bTagging 
+
+   //std::cout << "Input values size: " << inputVals->size() << std::endl;  
 }
 
 int main(int argc, char** argv)
@@ -127,6 +131,8 @@ int main(int argc, char** argv)
    const edm::ParameterSet &filesOpt        = process.getParameter<edm::ParameterSet>( "ioFilesOpt" );
     
    // config inputs
+   bool isBkg_                   = filesOpt.getParameter<bool>( "isBkg" );
+   double nodeNumber_            = filesOpt.getParameter<double>( "nodeNumber" );
    vector<string> inputFiles_    = filesOpt.getParameter<vector<string>>( "inputFiles" );
    string inputDir_              = filesOpt.getParameter<string>( "inputDir" );
    string outputDir_             = filesOpt.getParameter<string>( "outputDir" );
@@ -154,9 +160,11 @@ int main(int argc, char** argv)
        }
 	
        vector<string> split_str;
-       SplitString(inputFiles_.at(iFile), split_str, '/');
-       
-       TFile* outFile = new TFile((outputDir_+split_str.at(split_str.size()-1)).c_str(),"recreate");
+       SplitString(inputFiles_.at(iFile), split_str, '/');    
+       std::string outputName = outputDir_+split_str.at(split_str.size()-1);
+       if(isBkg_==true) outputName.replace(outputName.end()-5,outputName.end(),string("_nodeNumber"+to_string(int(nodeNumber_))+".root"));
+
+       TFile* outFile = new TFile(outputName.c_str(),"recreate");
        outFile->cd();
 
        if(inputDir_!="") inputDir_ = inputDir_ + '/';
@@ -189,14 +197,14 @@ int main(int argc, char** argv)
 
                //if( entry < 10000 ) continue;
                inputValues.clear();
-               SetValues(&inputValues, &branchVals);
+               SetValues(&inputValues, &branchVals, isBkg_, nodeNumber_);
  
                // fill input variables
                unsigned int shape = inputValues.size();
                tensorflow::Tensor inputVals(tensorflow::DT_FLOAT, {1,shape});
                for(unsigned int i = 0; i < shape; i++){
                    //if(std::isinf(inputValues[i])) std::cout << "inf: " << i << std::endl; 
-                   if(inputValues[i]<-25. || std::isinf(inputValues[i]) || std::isnan(inputValues[i])) inputVals.matrix<float>()(0,i) =  -9.;
+                   if(inputValues[i]<-25. || std::isinf(inputValues[i]) || std::isnan(inputValues[i])) inputVals.matrix<float>()(0,i) = -9.;
                    else inputVals.matrix<float>()(0,i) =  float(inputValues.at(i));
                } 
                
@@ -205,7 +213,6 @@ int main(int argc, char** argv)
                tensorflow::run(session, { {inputParams_[0].c_str(), inputVals} } , { inputParams_[1].c_str() }, &outputs); 
                evalDNN = outputs[0].matrix<float>()(0, 0);   
                evalDNNBranch->Fill(); 
-
            }
        }
        outFile->Write();

@@ -4,145 +4,86 @@ process = cms.PSet()
 
 process.ioFilesOpt = cms.PSet(
 
+    ##dataset type and node
+    isBkg = cms.bool(True), 
+    nodeNumber = cms.double(1.),
+
     ##input files
     inputFiles = cms.vstring(
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Data_Trees/Data_2016_HHWWggTag_0_MoreVars.root', 
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Data/Data_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Data_Trees/Data_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/DYJetsToLL_M-50_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/GJet_Pt-20to40_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/GJet_Pt-20toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/GluGluHToGG_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/GluGluHToGG_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/QCD_Pt-30to40_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/THQ_ctcvcp_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTGG_0Jets_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/ttHJetToGG_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTJets_HT-1200to2500_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTJets_HT-2500toInf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTJets_HT-600to800_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTJets_HT-800to1200_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/TTToHadronic_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/ttWJets_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/VBFHToGG_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/VHToGG_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W3JetsToLNu_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/W4JetsToLNu_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/WGGJets_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/WWTo1L1Nu2Q_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/WW_TuneCP5_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Signal/SL_NLO_2016_hadded/GluGluToHHTo2G2Qlnu_node_cHHH0_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Signal/SL_NLO_2016_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Signal/SL_NLO_2016_hadded/GluGluToHHTo2G2Qlnu_node_cHHH2p45_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Signal/SL_NLO_2016_hadded/GluGluToHHTo2G2Qlnu_node_cHHH5_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH0_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH2p45_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH5_2017_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Signal/SL_NLO_2018_hadded/GluGluToHHTo2G2Qlnu_node_cHHH0_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Signal/SL_NLO_2018_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Signal/SL_NLO_2018_hadded/GluGluToHHTo2G2Qlnu_node_cHHH2p45_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Signal/SL_NLO_2018_hadded/GluGluToHHTo2G2Qlnu_node_cHHH5_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Single_H_hadded/GluGluHToGG_M125_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Single_H_hadded/VBFHToGG_M125_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Single_H_hadded/VHToGG_M125_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2016/Single_H_hadded/ttHJetToGG_M125_2016_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Single_H_2018_hadded/GluGluHToGG_M125_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Single_H_2018_hadded/VBFHToGG_M125_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Single_H_2018_hadded/VHToGG_M125_2018_HHWWggTag_0_MoreVars.root',
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2018/Single_H_2018_hadded/ttHJetToGG_2018_M125_HHWWggTag_0_MoreVars.root'
+       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2.root'
     ),
     #inputDir = cms.string('tagsDumper/trees'), 
     inputDir = cms.string(''),  
-    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'),
+    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'),
     
     ##input DNN
-    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/model.pb'),
+    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/model.pb'),
     inputParams = cms.vstring('dense_1_input:0','dense_6/Sigmoid:0'), 
     inputBranches = cms.vstring(
-        'goodJets_0_E',
-        'goodLepton_phi',
-        'Subleading_Photon_E',
-        'Leading_Photon_pt',
-        'Leading_Photon_MVA',
-        'goodLepton_eta',
-        'goodJets_1_E',
-        'Wmass_goodJets12',
-        'goodLepton_E',
-        'goodJets_1_eta',
-        'goodJets_1_phi',
-        'Subleading_Photon_eta',
-        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb',
-        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb',
-        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb',
-        'goodLepton_pt',
-        'goodJets_0_pt',
-        'Subleading_Photon_pt',
-        'Subleading_Photon_phi',
-        'goodJets_1_pt',
-        'N_goodJets',
-        'goodJets_0_phi',
-        'METCor_pt',
-        'Leading_Photon_E',
-        'Leading_Photon_phi',
-        'Subleading_Photon_MVA',
-        'goodJets_0_eta',
-        'Leading_Photon_eta',
-        'Wmt_L',
-        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb', 
-        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb', 
-        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb',
-        'CMS_hgg_mass'
+        'goodJets_0_E', #0
+        'goodLepton_phi', #1
+        'Subleading_Photon_E', #2
+        'Leading_Photon_pt', #3
+        'Leading_Photon_MVA', #4
+        'goodLepton_eta', #5
+        'goodJets_1_E', #6
+        'Wmass_goodJets12', #7
+        'goodLepton_E', #8
+        'goodJets_1_eta', #9
+        'goodJets_1_phi', #10
+        'Subleading_Photon_eta', #11
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb', #12
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb', #13
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb', #14
+        'goodLepton_pt', #15
+        'goodJets_0_pt', #16
+        'Node_Number', #17
+        'Subleading_Photon_pt', #18
+        'Subleading_Photon_phi', #19
+        'goodJets_1_pt', #20
+        'N_goodJets', #21
+        'goodJets_0_phi', #22
+        'METCor_pt', #23
+        'Leading_Photon_E', #24
+        'Leading_Photon_phi', #25
+        'Subleading_Photon_MVA', #26
+        'goodJets_0_eta', #27
+        'Leading_Photon_eta', #28
+        'Wmt_L', #29
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb', #30
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb', #31 
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb', #32
+        'CMS_hgg_mass' #33
     ),   
     inputVars = cms.vstring(
-        'goodJets_0_E',
-        'goodLepton_phi',
-        'Subleading_Photon_E/CMS_hgg_mass',
-        'Leading_Photon_pt/CMS_hgg_mass',
-        'Leading_Photon_MVA',
-        'goodLepton_eta',
-        'goodJets_1_E',
-        'Wmass_goodJets12',
-        'goodLepton_E',
-        'goodJets_1_eta',
-        'goodJets_1_phi',
-        'Subleading_Photon_eta',
-        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb',
-        'goodLepton_pt',
-        'goodJets_0_pt',
-        'Subleading_Photon_pt/CMS_hgg_mass',
-        'Subleading_Photon_phi',
-        'goodJets_1_pt',
-        'N_goodJets',
-        'goodJets_0_phi',
-        'METCor_pt',
-        'Leading_Photon_E/CMS_hgg_mass',
-        'Leading_Photon_phi',
-        'Subleading_Photon_MVA',
-        'goodJets_0_eta',
-        'Leading_Photon_eta',
-        'Wmt_L',
-        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb'
+        'goodJets_0_E', #0
+        'goodLepton_phi', #1 
+        'Subleading_Photon_E/CMS_hgg_mass', #2
+        'Leading_Photon_pt/CMS_hgg_mass', #3
+        'Leading_Photon_MVA', #4
+        'goodLepton_eta', #5
+        'goodJets_1_E', #6
+        'Wmass_goodJets12', #7
+        'goodLepton_E', #8
+        'goodJets_1_eta', #9
+        'goodJets_1_phi', #10
+        'Subleading_Photon_eta', #11
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb', #12
+        'goodLepton_pt', #13
+        'goodJets_0_pt', #14
+        'Node_Number', #15
+        'Subleading_Photon_pt/CMS_hgg_mass', #16
+        'Subleading_Photon_phi', #17
+        'goodJets_1_pt', #18
+        'N_goodJets', #19
+        'goodJets_0_phi', #20
+        'METCor_pt', #21
+        'Leading_Photon_E/CMS_hgg_mass', #22
+        'Leading_Photon_phi', #23
+        'Subleading_Photon_MVA', #24
+        'goodJets_0_eta', #25
+        'Leading_Photon_eta', #26
+        'Wmt_L', #27
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb' #28
     ) 
 )   
