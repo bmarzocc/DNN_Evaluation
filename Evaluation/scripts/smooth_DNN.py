@@ -204,10 +204,11 @@ if __name__ == '__main__':
  parser.add_argument('-M', '--max', dest='max', required=False, type=float)
  parser.add_argument('-r', '--massMin', dest='massMin', required=False, type=float)
  parser.add_argument('-R', '--massMax', dest='massMax', required=False, type=float)
+ parser.add_argument('-N', '--node', dest='node', required=True, type=int)
  
  args = parser.parse_args()
  inDir = args.inDir
- #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+ #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'
 
  nBins = 100
  #print args.nBins,args.min,args.max
@@ -216,10 +217,12 @@ if __name__ == '__main__':
  if args.min: min = args.min
  max = 1.
  if args.max: max = args.max
- massMin = 115.
+ massMin = 120.
  if args.massMin: massMin = args.massMin
- massMax = 135.
+ massMax = 130.
  if args.massMax: massMax = args.massMax
+ node = 1
+ if args.node: node = args.node
 
  print "inDir:",inDir
  print "nBins:",nBins
@@ -227,6 +230,7 @@ if __name__ == '__main__':
  print "Max:",max
  print "massMin:",massMin
  print "massMax:",massMax
+ print "Node:",node
  
  histo_scale = ROOT.TH1F("histo_scale","",100000,-1.1,1.)
  Cut_noMass = '( evalDNN>'+str(min)+' )'
@@ -252,29 +256,31 @@ if __name__ == '__main__':
 
  histo_scale.Reset() 
  sig_tree_2017 = ROOT.TChain()
- sig_tree_2017.AddFile(inDir+'/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root/GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_v1')
+ sig_tree_2017.AddFile(inDir+'/GluGluToHHTo2G2Qlnu_node_'+str(int(node))+'_2017_odd.root/GluGluToHHTo2G2Qlnu_node_'+str(int(node))+'_2017_13TeV_HHWWggTag_0')
  sig_tree_2017.Draw("Leading_Photon_MVA<-1.?-1.1:Leading_Photon_MVA>>histo_scale","weight*0.441*0.00097*31.049*"+Cut_SR)
  sig_scale_2017 = float(histo_scale.Integral())
  sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SB_2017",str(lumi_2017)+"*weight*0.441*0.00097*31.049*"+Cut_SB)  
  sig_tree_2017.Draw("evalDNN>>h_DNN_signal_SR_2017",str(lumi_2017)+"*weight*0.441*0.00097*31.049*"+Cut_SR) 
 
  ### HtoGG Bkgs ###
- ggHtoGG_tree_2017 = ROOT.TChain()
- ggHtoGG_tree_2017.AddFile(inDir+'/GluGluHToGG_2017_HHWWggTag_0_MoreVars.root/ggh_125_13TeV_HHWWggTag_0_v1')
- ggHtoGG_tree_2017.Draw("evalDNN>>h_DNN_ggHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)  
- VBFHtoGG_tree_2017 = ROOT.TChain()
- VBFHtoGG_tree_2017.AddFile(inDir+'/VBFHToGG_2017_HHWWggTag_0_MoreVars.root/vbf_125_13TeV_HHWWggTag_0_v1')
- VBFHtoGG_tree_2017.Draw("evalDNN>>h_DNN_VBFHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)
- VHtoGG_tree_2017 = ROOT.TChain()
- VHtoGG_tree_2017.AddFile(inDir+'/VHToGG_2017_HHWWggTag_0_MoreVars.root/wzh_125_13TeV_HHWWggTag_0_v1')
- VHtoGG_tree_2017.Draw("evalDNN>>h_DNN_VHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR) 
- ttHJetToGG_tree_2017 = ROOT.TChain()
- ttHJetToGG_tree_2017.AddFile(inDir+'/ttHJetToGG_2017_HHWWggTag_0_MoreVars.root/tth_125_13TeV_HHWWggTag_0_v1')
- ttHJetToGG_tree_2017.Draw("evalDNN>>h_DNN_ttHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)   
+ #ggHtoGG_tree_2017 = ROOT.TChain()
+ #ggHtoGG_tree_2017.AddFile(inDir+'/GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/ggh_125_13TeV_HHWWggTag_0_v1')
+ #ggHtoGG_tree_2017.Draw("evalDNN>>h_DNN_ggHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)  
+ #VBFHtoGG_tree_2017 = ROOT.TChain()
+ #VBFHtoGG_tree_2017.AddFile(inDir+'/VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/vbf_125_13TeV_HHWWggTag_0_v1')
+ #VBFHtoGG_tree_2017.Draw("evalDNN>>h_DNN_VBFHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)
+ #VHtoGG_tree_2017 = ROOT.TChain()
+ #VHtoGG_tree_2017.AddFile(inDir+'/VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/wzh_125_13TeV_HHWWggTag_0_v1')
+ #VHtoGG_tree_2017.Draw("evalDNN>>h_DNN_VHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR) 
+ #ttHJetToGG_tree_2017 = ROOT.TChain()
+ #ttHJetToGG_tree_2017.AddFile(inDir+'/ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/tth_125_13TeV_HHWWggTag_0_v1')
+ #ttHJetToGG_tree_2017.Draw("evalDNN>>h_DNN_ttHtoGG_SR_2017",str(lumi_2017)+"*weight*"+Cut_SR)   
  
  histo_scale.Reset() 
  data_tree_2017 = ROOT.TChain()
- data_tree_2017.AddFile(inDir+'/Data_2017_HHWWggTag_0_MoreVars.root/Data_13TeV_HHWWggTag_0_v1') 
+ data_tree_2017.AddFile(inDir+'/Data_2016_HHWWggTag_0_MoreVars_nodeNumber'+str(node)+'.root/Data_13TeV_HHWWggTag_0_v1') 
+ data_tree_2017.AddFile(inDir+'/Data_2017_HHWWggTag_0_MoreVars_nodeNumber'+str(node)+'.root/Data_13TeV_HHWWggTag_0_v1') 
+ data_tree_2017.AddFile(inDir+'/Data_2018_HHWWggTag_0_MoreVars_nodeNumber'+str(node)+'.root/Data_13TeV_HHWWggTag_0_v1') 
  data_tree_2017 = reduceTree(data_tree_2017,Cut_noMass)
  data_tree_2017.Draw("Leading_Photon_MVA<-1.?-1.1:Leading_Photon_MVA>>histo_scale",Cut_SB)
  data_scale_2017 = float(histo_scale.Integral())
@@ -283,44 +289,44 @@ if __name__ == '__main__':
  
  #Bkgs MC samples
  treeNames = [
-   #'DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars.root/DiPhotonJetsBox_M40_80_Sherpa_13TeV_HHWWggTag_0', #
-   'DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root/DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa_13TeV_HHWWggTag_0',
-   #'GJet_Pt-20to40_HHWWggTag_0_MoreVars.root/GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
-   #'GJet_Pt-20toInf_HHWWggTag_0_MoreVars.root/GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
-   'GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root/GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0',
-   #'QCD_Pt-30to40_HHWWggTag_0_MoreVars.root/QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
-   #'QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root/QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
-   #'QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root/QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
-   #'DYJetsToLL_M-50_HHWWggTag_0_MoreVars.root/DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8_13TeV_HHWWggTag_0', #
-   'TTGG_0Jets_HHWWggTag_0_MoreVars.root/TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_13TeV_HHWWggTag_0',
-   'TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root/TTGJets_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8_13TeV_HHWWggTag_0',
-   #'TTJets_HT-600to800_HHWWggTag_0_MoreVars.root/TTJets_HT_600to800_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   #'TTJets_HT-800to1200_HHWWggTag_0_MoreVars.root/TTJets_HT_800to1200_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   #'TTJets_HT-1200to2500_HHWWggTag_0_MoreVars.root/TTJets_HT_1200to2500_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   #'TTJets_HT-2500toInf_HHWWggTag_0_MoreVars.root/TTJets_HT_2500toInf_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   'ttWJets_HHWWggTag_0_MoreVars.root/ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0',
-   'TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root/TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   #'W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root/W1JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0', #
-   'W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root/W1JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root/W1JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root/W1JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root/W1JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   #'W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root/W2JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0', #	
-   'W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root/W2JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root/W2JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root/W2JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   'W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root/W2JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
-   #'W3JetsToLNu_HHWWggTag_0_MoreVars.root/W3JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   #'W4JetsToLNu_HHWWggTag_0_MoreVars.root/W4JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
-   'WGGJets_HHWWggTag_0_MoreVars.root/WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0',
-   #'WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars.root/WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8_13TeV_HHWWggTag_0',
-   'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root/WGJJToLNu_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8_13TeV_HHWWggTag_0', #
-   #'WWTo1L1Nu2Q_HHWWggTag_0_MoreVars.root/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_13TeV_HHWWggTag_0', #
-   #'WW_TuneCP5_HHWWggTag_0_MoreVars.root/WW_TuneCP5_13TeV_pythia8_13TeV_HHWWggTag_0', #
-   'GluGluHToGG_2017_HHWWggTag_0_MoreVars.root/ggh_125_13TeV_HHWWggTag_0_v1',
-   'VBFHToGG_2017_HHWWggTag_0_MoreVars.root/vbf_125_13TeV_HHWWggTag_0_v1',
-   'VHToGG_2017_HHWWggTag_0_MoreVars.root/wzh_125_13TeV_HHWWggTag_0_v1', 
-   'ttHJetToGG_2017_HHWWggTag_0_MoreVars.root/tth_125_13TeV_HHWWggTag_0_v1' 
+   #'DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/DiPhotonJetsBox_M40_80_Sherpa_13TeV_HHWWggTag_0', #
+   'DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa_13TeV_HHWWggTag_0',
+   #'GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
+   #'GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
+   'GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0',
+   #'QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
+   #'QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
+   #'QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8_13TeV_HHWWggTag_0', #
+   #'DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8_13TeV_HHWWggTag_0', #
+   'TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_13TeV_HHWWggTag_0',
+   'TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTGJets_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8_13TeV_HHWWggTag_0',
+   #'TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTJets_HT_600to800_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   #'TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTJets_HT_800to1200_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   #'TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTJets_HT_1200to2500_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   #'TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTJets_HT_2500toInf_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   'ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0',
+   'TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   #'W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W1JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0', #
+   'W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W1JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W1JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W1JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W1JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   #'W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W2JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0', #	
+   'W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W2JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W2JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W2JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   'W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W2JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8_13TeV_HHWWggTag_0',
+   #'W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W3JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   #'W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/W4JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0', #
+   'WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_13TeV_HHWWggTag_0',
+   #'WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8_13TeV_HHWWggTag_0',
+   'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/WGJJToLNu_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8_13TeV_HHWWggTag_0', #
+   #'WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_13TeV_HHWWggTag_0', #
+   #'WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/WW_TuneCP5_13TeV_pythia8_13TeV_HHWWggTag_0', #
+   #'GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/ggh_125_13TeV_HHWWggTag_0_v1',
+   #'VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/vbf_125_13TeV_HHWWggTag_0_v1',
+   #'VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/wzh_125_13TeV_HHWWggTag_0_v1', 
+   #'ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2_nodeNumber'+str(node)+'.root/tth_125_13TeV_HHWWggTag_0_v1' 
  ]
 
  histo_scale.Reset() 
@@ -394,7 +400,7 @@ if __name__ == '__main__':
  algos = ['SmoothSuper']
 
  for algo in algos:
-   outFile = ROOT.TFile(inDir+'/DNN_Histos_smoothing_'+algo+'_bins'+str(nBins)+'_massMin'+str(massMin)+'_massMax'+str(massMax)+'.root',"RECREATE")
+   outFile = ROOT.TFile(inDir+'/DNN_Histos_smoothing_'+algo+'_bins'+str(nBins)+'_massMin'+str(massMin)+'_massMax'+str(massMax)+'_Node'+str(int(node))+'.root',"RECREATE")
    outFile.cd()
    hist_smooth = smoothing(h_DNN_bkg_SR_weighted,algo)
    if hist_smooth!=-1: 
@@ -433,9 +439,9 @@ if __name__ == '__main__':
    h_DNN_data_SB_diffBins.Write()
    h_DNN_bkg_SB_diffBins.Write()
    h_DNN_bkg_SB_weighted_diffBins.Write()
-   h_DNN_ggHtoGG_SR_2017.Write('h_DNN_ggHtoGG_SR')
-   h_DNN_VBFHtoGG_SR_2017.Write('h_DNN_VBFHtoGG_SR')
-   h_DNN_VHtoGG_SR_2017.Write('h_DNN_VHtoGG_SR')
-   h_DNN_ttHtoGG_SR_2017.Write('h_DNN_ttHtoGG_SR')
+   #h_DNN_ggHtoGG_SR_2017.Write('h_DNN_ggHtoGG_SR')
+   #h_DNN_VBFHtoGG_SR_2017.Write('h_DNN_VBFHtoGG_SR')
+   #h_DNN_VHtoGG_SR_2017.Write('h_DNN_VHtoGG_SR')
+   #h_DNN_ttHtoGG_SR_2017.Write('h_DNN_ttHtoGG_SR')
    outFile.Close()
 

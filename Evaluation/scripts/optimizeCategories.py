@@ -41,6 +41,7 @@ if __name__ == '__main__':
   parser.add_option( "-R", "--massMax", dest='massMax',  default=130,  type="float",  help="massMax")
   parser.add_option( "-s", "--smooth",  dest='smooth',   default=1,    type="int",    help="smooth")
   parser.add_option( "-w", "--weight",  dest='weight',   default=1,    type="int",    help="weight")
+  parser.add_option( "-N", "--node",    dest='node',     default=1,    type="int",    help="node")
   (options, args) = parser.parse_args()  
 
   nBins = options.nBins
@@ -50,7 +51,8 @@ if __name__ == '__main__':
   massMax = options.massMax
   useSmoothing =  options.smooth
   useWeight = options.weight
-  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+  node = options.node
+  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'
 
   print "inDir       :",inDir
   print "nBins       :",nBins
@@ -59,8 +61,9 @@ if __name__ == '__main__':
   print "massMax     :",massMax
   print "UseSmoothing:",useSmoothing
   print "useWeight   :",useWeight
+  print "node        :",node
 
-  inFile = ROOT.TFile(inDir+"/DNN_Histos_smoothing_SmoothSuper_bins"+str(nBins)+"_massMin"+str(massMin)+"_massMax"+str(massMax)+".root","READ")
+  inFile = ROOT.TFile(inDir+"/DNN_Histos_smoothing_SmoothSuper_bins"+str(nBins)+"_massMin"+str(massMin)+"_massMax"+str(massMax)+"_Node"+str(node)+".root","READ")
 
   h_bdt_datamix_SR_weighted_smooth = 0
 
@@ -161,7 +164,7 @@ if __name__ == '__main__':
    sys.exit()
 
   #final details
-  outFileName = inDir+"/categorize_nBins_"+str(nBins)+"_nCat_"+str(nCats)+"_massMin"+str(massMin)+"_massMax"+str(massMax)+"_v2.txt"
+  outFileName = inDir+"/categorize_nBins_"+str(nBins)+"_nCat_"+str(nCats)+"_massMin"+str(massMin)+"_massMax"+str(massMax)+"_Node"+str(node)+"_v2.txt"
   if useSmoothing!=1 and useWeight==1: outFileName = outFileName.replace('.txt','_noSmooth.txt')
   if useSmoothing==1 and useWeight!=1: outFileName = outFileName.replace('.txt','_noReweight.txt')
   if useSmoothing!=1 and useWeight!=1: outFileName = outFileName.replace('.txt','_noSmooth_noReweight.txt')

@@ -17,19 +17,22 @@ if __name__ == '__main__':
   parser.add_option( "-d", "--inDir",   dest="inDir",    default="",   type="string", help="inDir" )
   parser.add_option( "-r", "--massMin", dest='massMin',  default=120., type="float",  help="massMin")
   parser.add_option( "-R", "--massMax", dest='massMax',  default=130., type="float",  help="massMax")
-  parser.add_option( "-n", "--nStep",   dest='nStep',    default=1,    type="int",      help="nStep")
+  parser.add_option( "-n", "--nStep",   dest='nStep',    default=4,    type="int",    help="nStep")
+  parser.add_option( "-N", "--node",    dest='node',     default=1,    type="int",    help="node")
   (options, args) = parser.parse_args()  
 
   inDir = options.inDir
   massMin = options.massMin
   massMax = options.massMax
   nStep = options.nStep
-  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+  node = options.node
+  #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'
 
   print "inDir:  ",inDir
   print "massMin:",massMin
   print "massMax:",massMax
   print "nStep:",nStep
+  print "node:",node
   
   local = os.getcwd()
   if not os.path.isdir('error'): os.mkdir('error') 
@@ -62,16 +65,17 @@ LOCAL=$2;
 INPUTDIR=$3;
 NBINS=$4;
 NCATS=$5;
-MASSMIN=$6
-MASSMAX=$7
-SMOOTH=$8
-WEIGHT=$9
+MASSMIN=$6;
+MASSMAX=$7;
+SMOOTH=$8;
+WEIGHT=$9;
+NODE=${10};
 
 echo -e "evaluate"
 eval `scramv1 ru -sh`
 
 echo -e "Optimize significance";
-python ${LOCAL}/optimizeCategories.py -d ${INPUTDIR}/ -n ${NBINS} -c ${NCATS} --massMin ${MASSMIN} --massMax ${MASSMAX} -s ${SMOOTH} -w ${WEIGHT}
+python ${LOCAL}/optimizeCategories.py -d ${INPUTDIR}/ -n ${NBINS} -c ${NCATS} --massMin ${MASSMIN} --massMax ${MASSMAX} -s ${SMOOTH} -w ${WEIGHT} --node ${NODE}
 
 echo -e "DONE";
 '''
@@ -84,7 +88,7 @@ echo -e "DONE";
               for k in range(0,2): 
                  if iBin == 380 and nCat == 5: continue
                  if iBin > 380 and nCat > 3: continue
-                 arguments.append("{} {} {} {} {} {} {} {} {}".format(nCat,local,inDir+"/",iBin,nCat,massMin+i,massMax-i,j,k))     
+                 arguments.append("{} {} {} {} {} {} {} {} {} {}".format(nCat,local,inDir+"/",iBin,nCat,massMin+i,massMax-i,j,k,node))     
   with open("arguments.txt", "w") as args:
      args.write("\n".join(arguments)) 
   with open("run_script.sh", "w") as rs:

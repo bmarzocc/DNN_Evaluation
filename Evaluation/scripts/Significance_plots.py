@@ -112,17 +112,19 @@ if __name__ == '__main__':
  parser.add_argument('-d', '--inDir',   dest='inDir',   required=True, type=str)
  parser.add_argument('-s', '--smooth',  dest='smooth',  required=True, type=int)
  parser.add_argument('-w', '--weight',  dest='weight',  required=True, type=int)
+ parser.add_argument('-N', '--node',    dest='node',    required=True, type=int)
  
  
  args = parser.parse_args()
  inDir = args.inDir
  useSmoothing =  args.smooth
  useWeight = args.weight
+ node = args.node
  
  
- #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM/'
+ #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'
 
- os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*.txt >> file_dump.txt')
+ os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2.txt >> file_dump.txt')
  with open('file_dump.txt') as f_List:
    data_List = f_List.read()
  lines_List = data_List.splitlines() 
@@ -196,33 +198,34 @@ if __name__ == '__main__':
    massMin = -1
    massMax = -1
    
+   #print "line_split: ",line_split
    if 'noSmooth_noReweight' in line:
+      nBins = line_split[-9]
+      nCats = line_split[-7]
+      massMin = line_split[-6]
+      massMin = massMin.replace('massMin','')
+      massMax = line_split[-5]
+      massMax = massMax.replace('massMax','') 
+   elif 'noSmooth' in line:
       nBins = line_split[-8]
       nCats = line_split[-6]
       massMin = line_split[-5]
       massMin = massMin.replace('massMin','')
       massMax = line_split[-4]
       massMax = massMax.replace('massMax','') 
-   elif 'noSmooth' in line:
-      nBins = line_split[-7]
-      nCats = line_split[-5]
-      massMin = line_split[-4]
-      massMin = massMin.replace('massMin','')
-      massMax = line_split[-3]
-      massMax = massMax.replace('massMax','') 
    elif 'noReweight' in line:
-      nBins = line_split[-7]
-      nCats = line_split[-5]
-      massMin = line_split[-4]
+      nBins = line_split[-8]
+      nCats = line_split[-6]
+      massMin = line_split[-5]
       massMin = massMin.replace('massMin','')
-      massMax = line_split[-3]
+      massMax = line_split[-4]
       massMax = massMax.replace('massMax','')  
    else:
-      nBins = line_split[-6]
-      nCats = line_split[-4]
-      massMin = line_split[-3]
+      nBins = line_split[-7]
+      nCats = line_split[-5]
+      massMin = line_split[-4]
       massMin = massMin.replace('massMin','')
-      massMax = line_split[-2]
+      massMax = line_split[-3]
       massMax = massMax.replace('massMax','') 
 
    if useSmoothing==1 and 'noSmooth' in line: continue
@@ -270,15 +273,15 @@ if __name__ == '__main__':
 
     file = 0
     if useSmoothing==1 and useWeight==1:
-     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_v2.txt'
+     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2.txt'
     elif useSmoothing!=1 and useWeight==1:
-     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_v2_noSmooth.txt'
+     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2_noSmooth.txt'
     elif useSmoothing==1 and useWeight!=1:
-     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_v2_noReweight.txt'
+     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2_noReweight.txt'
     elif useSmoothing!=1 and useWeight!=1:
-     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_v2_noSmooth_noReweight.txt'
+     file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2_noSmooth_noReweight.txt'
     if not os.path.exists(file): continue 
-    with open(inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_v2.txt') as f_List:
+    with open(inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2.txt') as f_List:
       data_List = f_List.read()
     lines_List = data_List.splitlines() 
     significance = 0.
