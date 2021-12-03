@@ -8,9 +8,15 @@ from optparse import OptionParser
 import operator
 import os
 
-def replaceString(fileName,inputFile):
+def replaceString1(fileName,inputFile):
   with open(fileName) as f:
     newText=f.read().replace('INPUTFILE', inputFile)
+  with open(fileName, "w") as f:
+    f.write(newText)
+
+def replaceString2(fileName,node):
+  with open(fileName) as f:
+    newText=f.read().replace('NODE', "%.0f"%float(node))
   with open(fileName, "w") as f:
     f.write(newText)
 
@@ -20,10 +26,13 @@ if __name__ == '__main__':
 
   parser = OptionParser()
   parser.add_option( "-i", "--inList", dest="inList", default="", type="string", help="inList" )
+  parser.add_option( "-n", "--node",   dest="node",   default="", type="string",    help="node" )
   (options, args) = parser.parse_args() 
 
   inList = options.inList
+  node = options.node
   print "inList:",inList
+  print "node:  ",node
   
   local = os.getcwd()
   if not os.path.isdir('error'): os.mkdir('error') 
@@ -71,9 +80,10 @@ echo -e "DONE";
     if(line.find("#") != -1):
        continue
     print "JobID ",i,": ",line  
-    cfg_name = str('Evaluate_WWggDNN.py').replace('.py','_job'+str(i)+'.py') 
+    cfg_name = str('Evaluate_WWggDNN.py').replace('.py','_job'+str(i)+'_NodeNumber'+str(node)+'.py') 
     os.system('cp Evaluate_WWggDNN.py '+cfg_name)  
-    replaceString(cfg_name,line)
+    replaceString1(cfg_name,line)
+    replaceString2(cfg_name,node)
     arguments.append("{} {} {}".format(i,local,cfg_name))  
 
   with open("arguments.txt", "w") as args:
