@@ -5,19 +5,19 @@ process = cms.PSet()
 process.ioFilesOpt = cms.PSet(
 
     ##dataset type and node
-    isBkg = cms.bool(True), 
+    isBkg = cms.bool(False), 
     nodeNumber = cms.double(1.),
 
     ##input files
     inputFiles = cms.vstring(
-       '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/2017/Backgrounds/ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v2.root'
+       '/eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/2017/1_odd/GluGluToHHTo2G2Qlnu_node_1_2017_odd.root'
     ),
     #inputDir = cms.string('tagsDumper/trees'), 
     inputDir = cms.string(''),  
-    outputDir = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'),
+    outputDir = cms.string('/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/EFT_DNN_Training/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized_CorMET/'),
     
     ##input DNN
-    inputModel = cms.string('/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/model.pb'),
+    inputModel = cms.string('/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/EFT_DNN_Training/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized_CorMET/model.pb'),
     inputParams = cms.vstring('dense_1_input:0','dense_6/Sigmoid:0'), 
     inputBranches = cms.vstring(
         'goodJets_0_E', #0

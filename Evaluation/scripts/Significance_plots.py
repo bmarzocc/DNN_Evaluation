@@ -120,11 +120,22 @@ if __name__ == '__main__':
  useSmoothing =  args.smooth
  useWeight = args.weight
  node = args.node
- 
- 
- #inDir = '/eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized/'
 
- os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2.txt >> file_dump.txt')
+ print "inDir:",inDir
+ print "useSmoothing:",useSmoothing
+ print "useWeight:",useWeight
+ print "node:",node
+ 
+ #inDir = '/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/EFT_DNN_Training/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized_CorMET'
+
+ if useSmoothing==1 and useWeight==1: 
+    os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2.txt >> file_dump.txt')
+ elif useSmoothing==1 and useWeight!=1: 
+    os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2_noReweight.txt >> file_dump.txt')
+ elif useSmoothing!=1 and useWeight==1: 
+    os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2_noSmooth.txt >> file_dump.txt')
+ elif useSmoothing!=1 and useWeight!=1: 
+    os.system('ls '+inDir+'/categorize_nBins_*_nCat_*_massMin*_Node'+str(node)+'_v2_noSmooth_noReweight.txt >> file_dump.txt')
  with open('file_dump.txt') as f_List:
    data_List = f_List.read()
  lines_List = data_List.splitlines() 
@@ -281,7 +292,7 @@ if __name__ == '__main__':
     elif useSmoothing!=1 and useWeight!=1:
      file = inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2_noSmooth_noReweight.txt'
     if not os.path.exists(file): continue 
-    with open(inDir+'/categorize_nBins_'+str(nBins)+'_nCat_'+str(nCats)+'_massMin'+str(massMin_pos[i])+'_massMax'+str(massMax_pos[i])+'_Node'+str(node)+'_v2.txt') as f_List:
+    with open(file) as f_List:
       data_List = f_List.read()
     lines_List = data_List.splitlines() 
     significance = 0.
@@ -534,10 +545,10 @@ if __name__ == '__main__':
    drawGraphs(points_3Cat_dataSB_Total_final,"dataSB_vs_nBins_nCats_3_noReweight","nBins","dataSB",True,massMin_pos,massMax_pos)
    drawGraphs(points_3Cat_boundary_Total_final,"boundary_vs_nBins_nCats_3_noReweight","nBins","dataSB",True,massMin_pos,massMax_pos) 
  
-   drawGraphs(points_4Cat_Total_final,"Significance_vs_nBins_nCats_4","nBins","Significance",True,massMin_pos,massMax_pos)
-   drawGraphs(points_4Cat_nSig_Total_final,"nSig_vs_nBins_nCats_4","nBins","nSig",True,massMin_pos,massMax_pos)
-   drawGraphs(points_4Cat_nBkg_Total_final,"nBkg_vs_nBins_nCats_4","nBins","nBkg",True,massMin_pos,massMax_pos)
-   drawGraphs(points_4Cat_dataSB_Total_final,"dataSB_vs_nBins_nCats_4","nBins","dataSB",True,massMin_pos,massMax_pos)
+   drawGraphs(points_4Cat_Total_final,"Significance_vs_nBins_nCats_4_noReweight","nBins","Significance",True,massMin_pos,massMax_pos)
+   drawGraphs(points_4Cat_nSig_Total_final,"nSig_vs_nBins_nCats_4_noReweight","nBins","nSig",True,massMin_pos,massMax_pos)
+   drawGraphs(points_4Cat_nBkg_Total_final,"nBkg_vs_nBins_nCats_4_noReweight","nBins","nBkg",True,massMin_pos,massMax_pos)
+   drawGraphs(points_4Cat_dataSB_Total_final,"dataSB_vs_nBins_nCats_4_noReweight","nBins","dataSB",True,massMin_pos,massMax_pos)
    drawGraphs(points_4Cat_boundary_Total_final,"boundary_vs_nBins_nCats_4_noReweight","nBins","dataSB",True,massMin_pos,massMax_pos)
 
    drawGraphs(points_5Cat_Total_final,"Significance_vs_nBins_nCats_5_noReweight","nBins","Significance",True,massMin_pos,massMax_pos)
